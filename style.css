@@ -93,12 +93,16 @@ body {
 
 .controls {
   margin: 2.7rem;
+  display: flex;
+  color: white;
+  font-size: 1.3rem;
+  align-items: center;
 }
 
 .controls label {
   color: white;
   font-weight: bolder;
-  font-size: 1.3rem;
+  margin-right: 1rem;
 }
 
 .custom-select {
@@ -135,4 +139,43 @@ body {
 
 .custom-select:hover::after {
   color: #007bff;
+}
+
+.filter {
+  font-weight: bold;
+  display: flex;
+  margin: 0 2rem;
+  align-items: center;
+}
+
+.filter-tags-container {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+}
+
+.filter-tags {
+  font-size: 0.9rem;
+  font-weight: 900;
+  font-style: italic;
+  font-style: italic;
+  color: #3a8f56;
+  padding: 0.5rem;
+}
+
+.clear-btn-container {
+  position: relative;
+}
+.clear {
+  cursor: pointer;
+  position: absolute;
+  top: -1.6rem;
+  display: none;
+  border-radius: 70%;
+  font-size: 1rem;
+  font-weight: bold;
+  font-weight: bold;
+  width: 1.5rem;
+  background-color: transparent;
+  color: red;
 }

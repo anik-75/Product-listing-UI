@@ -1,15 +1,19 @@
 const listContainer = document.querySelector(".list-container");
 const sortSelect = document.querySelector("#sort");
+const filterTags = document.querySelector(".filter-tags");
+const clearTagsBtn = document.querySelector(".clear");
 
 const url =
   "https://api.freeapi.app/api/v1/public/randomproducts?page=1&limit=20&inc=category%2Cprice%2Cthumbnail%2Cimages%2Ctitle%2Cid";
 const products = [];
+let data = [];
 async function getData(url) {
   const response = await fetch(url);
   const json = await response.json();
   const data = json.data.data;
   products.push(...data);
-  generateCardList(products);
+  data.push(...products);
+  generateCardList(data);
 }
 getData(url);
 
@@ -44,11 +48,11 @@ function generateCardList(data) {
 
 sortSelect.addEventListener("change", function (e) {
   if (this.value === "low-to-high") {
-    sortByHandler(products, "ASC");
+    sortByHandler(data, "ASC");
   } else if (this.value === "high-to-low") {
-    sortByHandler(products, "DESC");
+    sortByHandler(data, "DESC");
   } else {
-    sortByHandler(products);
+    sortByHandler(data);
   }
 });
 
@@ -67,7 +71,29 @@ function sortByHandler(data, sortOrder = "none") {
   generateCardList(data);
 }
 
+listContainer.addEventListener("click", (e) => {
+  if (e.target.tagName === "P") {
+    const value = e.target.textContent;
+    const category = value.substring(1);
+    data = filterHandler(products, category);
+    generateCardList(data);
+    filterTags.textContent = `#${category}`;
+    clearTagsBtn.style.display = "block";
+  }
+});
+
+clearTagsBtn.addEventListener("click", (e) => {
+  filterTags.textContent = "";
+  clearTagsBtn.style.display = "none";
+  data.push(...products);
+  generateCardList(filterHandler(data, ""));
+});
+
 function filterHandler(data, tag = "skincare") {
+  if (tag.trim() === "") {
+    return data;
+  }
+  clearTagsBtn.style.display = "";
   const filterData = data.filter((element) => {
     return element.category.toLowerCase() === tag.toLowerCase();
   });

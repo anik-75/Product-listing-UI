@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Quick Buy</title>
 </head>
 <link rel="stylesheet" href="style.css">
 <script defer async src="script.js"> </script>
@@ -26,8 +26,16 @@
           <option value="high-to-low">High to Low</option>
         </select>
 
-        <div>
-          <p>Filter By: </p>
+        <div class="filter">
+          <p><span>Filter by:</span>
+          <div class="filter-tags-container">
+            <span class="filter-tags"></span>
+            <span class="clear-btn-container">
+              <button class="clear">X</button>
+            </span>
+
+          </div>
+          </p>
         </div>
       </div>
     </div>
