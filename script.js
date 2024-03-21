@@ -22,7 +22,6 @@ async function getData(url) {
   products.push(...fetchData);
   data.push(...products);
   const dataSlice = getDataSlice(data);
-  console.log(products);
   generateCardList(dataSlice);
 }
 getData(url);
@@ -50,7 +49,7 @@ function generateCard(obj) {
     }
 
     listContainer.innerHTML += `
-      <div class="card" >
+      <li class="card" >
         <span class="card-header">
           <img src=${obj.thumbnail} alt=${obj.title}/>
         </span>
@@ -63,7 +62,7 @@ function generateCard(obj) {
             obj.id
           } data-action=${btnAction} class="fav-btn">${btnText}</button>
         </div>
-      </div>
+      </li>
   `;
   }
 }
@@ -103,7 +102,7 @@ function sortByHandler(data, sortOrder = "none") {
 }
 
 listContainer.addEventListener("click", (e) => {
-  if (e.target.tagName === "P") {
+  if (e.target.tagName === "P" && e.target.className === "category") {
     const value = e.target.textContent;
     const category = value.substring(1);
     const filteredData = filterHandler(products, category);
@@ -261,7 +260,6 @@ function debounce(fn, delay) {
     const context = this;
     clearTimeout(timerId);
     timerId = setTimeout(() => {
-      console.log("call");
       fn.apply(context, args);
     }, delay);
   };
