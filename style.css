@@ -187,3 +187,34 @@ body {
   background-color: transparent;
   color: red;
 }
+footer {
+  margin: 2rem;
+}
+#pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+}
+.pagination-btn {
+  border-radius: 20px;
+  padding: 0.6rem 1.2rem;
+  margin: 0 0.3rem;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+.pagination-btn:hover {
+  background-color: #f0f0f0;
+}
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.current-page {
+  margin: 0 0.6px;
+  font-weight: bold;
+}

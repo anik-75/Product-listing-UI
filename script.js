@@ -4,18 +4,24 @@ const filterTags = document.querySelector(".filter-tags");
 const clearTagsBtn = document.querySelector(".clear");
 const bookmark = document.querySelector(".bookmark-container");
 let showBookmark = false;
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+const currentPageSpan = document.querySelector(".current-page");
 
+const itemsPerPage = 10;
+let currentPage = 1;
 const url =
-  "https://api.freeapi.app/api/v1/public/randomproducts?page=1&limit=20&inc=category%2Cprice%2Cthumbnail%2Cimages%2Ctitle%2Cid";
+  "https://api.freeapi.app/api/v1/public/randomproducts?page=1&limit=100&inc=category%2Cprice%2Cthumbnail%2Cimages%2Ctitle%2Cid";
 const products = [];
 let data = [];
 async function getData(url) {
   const response = await fetch(url);
   const json = await response.json();
-  const data = json.data.data;
-  products.push(...data);
+  const fetchData = json.data.data;
+  products.push(...fetchData);
   data.push(...products);
-  generateCardList(data);
+  const dataSlice = getDataSlice(data);
+  generateCardList(dataSlice);
 }
 getData(url);
 
@@ -75,6 +81,7 @@ sortSelect.addEventListener("change", function (e) {
   } else {
     sortByHandler(data);
   }
+  generateCardList(data);
 });
 
 function sortByHandler(data, sortOrder = "none") {
@@ -89,15 +96,18 @@ function sortByHandler(data, sortOrder = "none") {
   } else {
     return data;
   }
-  generateCardList(data);
 }
 
 listContainer.addEventListener("click", (e) => {
   if (e.target.tagName === "P") {
     const value = e.target.textContent;
     const category = value.substring(1);
-    data = filterHandler(products, category);
-    generateCardList(data);
+    const filteredData = filterHandler(products, category);
+    data.splice(0, data.length);
+    data.push(...filteredData);
+    currentPage = 1;
+    const dataSlice = getDataSlice(filteredData);
+    generateCardList(dataSlice);
     filterTags.textContent = `#${category}`;
     clearTagsBtn.style.display = "block";
   } else if (e.target.tagName === "BUTTON") {
@@ -141,8 +151,11 @@ listContainer.addEventListener("click", (e) => {
 clearTagsBtn.addEventListener("click", (e) => {
   filterTags.textContent = "";
   clearTagsBtn.style.display = "none";
+  data.splice(0, data.length);
   data.push(...products);
-  generateCardList(filterHandler(data, ""));
+  currentPage = 1;
+  const dataSlice = getDataSlice(products);
+  generateCardList(dataSlice);
 });
 
 function filterHandler(data, tag = "skincare") {
@@ -160,9 +173,53 @@ bookmark.addEventListener("click", () => {
   showBookmark = !showBookmark;
   if (showBookmark) {
     const bookmarkProducts = JSON.parse(localStorage.getItem("Products"));
-    generateCardList(bookmarkProducts);
+    data.splice(0, data.length);
+    data.push(...bookmarkProducts);
+    currentPage = 1;
+    const dataSlice = getDataSlice(data);
+    generateCardList(dataSlice);
   } else {
+    data.splice(0, data.length);
     data.push(...products);
-    generateCardList(data);
+    currentPage = 1;
+    const dataSlice = getDataSlice(data);
+    generateCardList(dataSlice);
   }
 });
+
+// pagination
+function getDataSlice(data) {
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === Math.ceil(data.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const slice = data.slice(startIndex, endIndex);
+  currentPageSpan.textContent = currentPage;
+  return slice;
+}
+
+function updatePaginationButtons() {
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === Math.ceil(products.length / itemsPerPage);
+}
+
+function goToPrevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    const dataSlice = getDataSlice(data);
+    generateCardList(dataSlice);
+    updatePaginationButtons();
+  }
+}
+
+function goToNextPage() {
+  if (currentPage < Math.ceil(data.length / itemsPerPage)) {
+    currentPage++;
+    const dataSlice = getDataSlice(data);
+    generateCardList(dataSlice);
+    updatePaginationButtons();
+  }
+}
+
+nextBtn.addEventListener("click", () => goToNextPage());
+prevBtn.addEventListener("click", () => goToPrevPage());
