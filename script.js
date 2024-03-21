@@ -7,6 +7,7 @@ let showBookmark = false;
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
 const currentPageSpan = document.querySelector(".current-page");
+const searchInput = document.querySelector("#query");
 
 const itemsPerPage = 10;
 let currentPage = 1;
@@ -21,6 +22,7 @@ async function getData(url) {
   products.push(...fetchData);
   data.push(...products);
   const dataSlice = getDataSlice(data);
+  console.log(products);
   generateCardList(dataSlice);
 }
 getData(url);
@@ -81,7 +83,9 @@ sortSelect.addEventListener("change", function (e) {
   } else {
     sortByHandler(data);
   }
-  generateCardList(data);
+  currentPage = 1;
+  const dataSlice = getDataSlice(data);
+  generateCardList(dataSlice);
 });
 
 function sortByHandler(data, sortOrder = "none") {
@@ -223,3 +227,42 @@ function goToNextPage() {
 
 nextBtn.addEventListener("click", () => goToNextPage());
 prevBtn.addEventListener("click", () => goToPrevPage());
+
+// Search functionality
+// debounce function
+const debouncedFunc = debounce(searchHandler, 5000);
+
+searchInput.addEventListener("input", function (e) {
+  debouncedFunc(this.value);
+});
+
+function searchHandler(query) {
+  if (query.trim() === "") {
+    data.splice(0, data.length);
+    data.push(...products);
+    currentPage = 1;
+    const dataSlice = getDataSlice(data);
+    generateCardList(dataSlice);
+  }
+  const searchedRes = products.filter((product) =>
+    product.title.toLowerCase().includes(query.toLowerCase())
+  );
+  data.splice(0, data.length);
+  data.push(...searchedRes);
+  currentPage = 1;
+  const dataSlice = getDataSlice(data);
+  generateCardList(dataSlice);
+  return;
+}
+
+function debounce(fn, delay) {
+  let timerId;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      console.log("call");
+      fn.apply(context, args);
+    }, delay);
+  };
+}
