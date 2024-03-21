@@ -229,7 +229,7 @@ prevBtn.addEventListener("click", () => goToPrevPage());
 
 // Search functionality
 // debounce function
-const debouncedFunc = debounce(searchHandler, 5000);
+const debouncedFunc = debounce(searchHandler, 300);
 
 searchInput.addEventListener("input", function (e) {
   debouncedFunc(this.value);
